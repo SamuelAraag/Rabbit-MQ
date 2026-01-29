@@ -45,10 +45,4 @@ CodeCoverage/
 *.binlog
 
 # MSTest test Results
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
-
-# NUnit
-*.VisualState.xml
-TestResult.xml
-nunit-*.xml
+.vs
