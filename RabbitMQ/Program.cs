@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using RabbitMQ.Controllers;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -8,6 +10,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.AddApiEndpoint();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

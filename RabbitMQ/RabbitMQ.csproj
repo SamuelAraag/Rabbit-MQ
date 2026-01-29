@@ -10,6 +10,13 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Relatorios\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Relatorios\" />
+  </ItemGroup>
 </Project>
