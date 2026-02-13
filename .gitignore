@@ -46,6 +46,7 @@ CodeCoverage/
 
 # MSTest test Results
 .vs
+.vscode
 
 **/obj/
 **/bin/
