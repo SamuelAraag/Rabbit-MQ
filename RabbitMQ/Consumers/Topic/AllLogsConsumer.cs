@@ -12,11 +12,11 @@ namespace RabbitMQ.Consumers.Topic
     /// - Este consumer receberá QUALQUER mensagem que comece com "log."
     /// 
     /// EXEMPLOS DE ROUTING KEYS QUE ESTE CONSUMER RECEBERÁ:
-    /// ✅ "log.info.pedidos"         -> recebe
-    /// ✅ "log.error.pagamentos"     -> recebe
-    /// ✅ "log.warning.usuarios"     -> recebe
-    /// ✅ "log.info.api.gateway"     -> recebe (múltiplas palavras)
-    /// ❌ "payment.error"            -> NÃO recebe (não começa com "log.")
+    /// "log.info.pedidos"         -> recebe
+    /// "log.error.pagamentos"     -> recebe
+    /// "log.warning.usuarios"     -> recebe
+    /// "log.info.api.gateway"     -> recebe (múltiplas palavras)
+    /// "payment.error"            -> NÃO recebe (não começa com "log.")
     /// 
     /// CASO DE USO:
     /// - Monitoramento geral do sistema
@@ -49,7 +49,7 @@ namespace RabbitMQ.Consumers.Topic
             // - Salvar em banco de dados
             // - Enviar para serviço de monitoramento (Datadog, New Relic, etc)
             // - Gerar métricas e dashboards
-            await Task.Delay(300);
+            await Task.Delay(100);
 
             _logger.LogInformation(
                 "[TOPIC - ALL LOGS] Log processado - CorrelationId: {CorrelationId}",

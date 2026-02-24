@@ -12,11 +12,11 @@ namespace RabbitMQ.Consumers.Topic
     /// - Receberá apenas mensagens que começam com "log.error."
     /// 
     /// EXEMPLOS DE ROUTING KEYS:
-    /// ❌ "log.info.pedidos"         -> NÃO recebe (não é error)
-    /// ✅ "log.error.pagamentos"     -> recebe
-    /// ❌ "log.warning.usuarios"     -> NÃO recebe (não é error)
-    /// ✅ "log.error.api.gateway"    -> recebe
-    /// ✅ "log.error.database"       -> recebe
+    /// "log.info.pedidos"         -> NÃO recebe (não é error)
+    /// "log.error.pagamentos"     -> recebe
+    /// "log.warning.usuarios"     -> NÃO recebe (não é error)
+    /// "log.error.api.gateway"    -> recebe
+    /// "log.error.database"       -> recebe
     /// 
     /// CASO DE USO:
     /// - Alertas críticos e notificações
