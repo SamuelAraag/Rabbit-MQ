@@ -260,4 +260,44 @@ public class ServiceConectionRabbitMq
     // Bind
     // Publicar mensagem
     // Consumir manualmente para validar
+    
+    //Deve conectar ao RabbitMQ
+    // 
+    // Deve falhar com host inválido
+    // 
+    // Deve falhar com credenciais inválidas
+    // 
+    // Deve declarar exchange
+    // 
+    // Deve declarar queue
+    // 
+    // Deve fazer bind entre exchange e queue
+    // 
+    // Deve publicar mensagem
+    // 
+    // Deve consumir mensagem
+    // 
+    // Deve fazer ACK manual
+    // 
+    // Deve reenfileirar mensagem sem ACK
+    // 
+    // Deve publicar mensagem persistente
+    // 
+    // Deve configurar fila como durable
+    // 
+    // Deve enviar mensagem para Dead Letter Queue
+    // 
+    // Deve aplicar TTL na mensagem
+    // 
+    // Deve aplicar TTL na fila
+    // 
+    // Deve respeitar prefetch (BasicQos)
+    // 
+    // Deve processar múltiplas mensagens concorrentes
+    // 
+    // Deve lidar com retry após falha
+    // 
+    // Deve lidar com exception no consumer
+    // 
+    // Deve mockar BasicPublish em teste unitário
 }
