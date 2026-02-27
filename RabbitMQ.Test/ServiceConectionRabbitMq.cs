@@ -1,3 +1,4 @@
+using System.Security.Authentication.ExtendedProtection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 
@@ -66,6 +67,94 @@ public class ServiceConectionRabbitMq
         var ehValorEsperado = result > 0 && result < 100;
         Assert.True(ehValorEsperado);
     }
+
+    [Fact]
+    public async Task DeveCriarConexao_QuandoUsadoConfiguracoesDefault()
+    {
+        var connection = new ConnectionFactory()
+        {
+            UserName =  "guest",
+            Password = "guest",
+            HostName = "localhost"
+        };
+        
+        Assert.NotNull(connection);
+
+        await using var connectionOpen = await connection.CreateConnectionAsync();
+        Assert.NotNull(connectionOpen);
+        Assert.True(connectionOpen.IsOpen);
+    }
+    
+    [Fact]
+    public async Task DeveDarErroAoCriarConexao_QuandoUsadoUsuarioIncorreto()
+    {
+        var connection = new ConnectionFactory()
+        {
+            UserName =  "user-incorrect",
+            Password = "guest",
+            HostName = "localhost"
+        };
+        
+        Assert.NotNull(connection);
+
+        var retorno = await Assert.ThrowsAsync<BrokerUnreachableException>(async () => await connection.CreateConnectionAsync());
+        Assert.Equal("None of the specified endpoints were reachable", retorno.Message);
+    }
+    
+    [Fact]
+    public async Task DeveDarErroAoCriarConexao_QuandoUsadoSenhaIncorreta()
+    {
+        var connection = new ConnectionFactory()
+        {
+            UserName =  "guest",
+            Password = "guest-incorrect",
+            HostName = "localhost"
+        };
+        
+        Assert.NotNull(connection);
+        
+        var retorno = await Assert.ThrowsAsync<BrokerUnreachableException>(async () => await connection.CreateConnectionAsync());
+        Assert.Equal("None of the specified endpoints were reachable", retorno.Message);
+    }
+    
+    [Fact]
+    public async Task DeveDarErroAoCriarConexao_QuandoUsadoHostIncorreto()
+    {
+        var connection = new ConnectionFactory()
+        {
+            UserName =  "guest",
+            Password = "guest",
+            HostName = "host-dont-exist"
+        };
+        
+        Assert.NotNull(connection);
+
+        var retorno = await Assert.ThrowsAsync<BrokerUnreachableException>(async () => await connection.CreateConnectionAsync());
+        Assert.Equal("None of the specified endpoints were reachable", retorno.Message);
+    }
+    
+    [Fact]
+    public async Task DeveCriarExchangeTopic()
+    {
+        var connectionFactory = new ConnectionFactory()
+        {
+            UserName =  "guest",
+            Password = "guest",
+            HostName = "localhost"
+        };
+        
+        Assert.NotNull(connectionFactory);
+
+        await using var connection = await connectionFactory.CreateConnectionAsync();
+        await using var channel = await connection.CreateChannelAsync();
+
+        await channel.ExchangeDeclareAsync(
+            exchange: "exchange-teste",
+            type: ExchangeType.Topic,
+            durable: true,
+            autoDelete: false
+        );
+    }
     
     [Fact]
     public async Task DeveCriarUmaExchangeDoTipoFanout()
@@ -104,4 +193,71 @@ public class ServiceConectionRabbitMq
         //pra verificar existe um metodo chamado 'ExchangeDeclarePassiveAsync' - nome da exchange
         await Assert.ThrowsAsync<OperationInterruptedException>(async () => await channel.ExchangeDeclarePassiveAsync("exchange-existente"));
     }
+    
+    [Fact]
+    public async Task DeveCriarFila()
+    {
+        //do que preciso?
+        var factory = new RabbitMqService();
+        
+        await using var connection = await factory.Connection.CreateConnectionAsync();
+        await using var channel = await connection.CreateChannelAsync();
+        
+        const string nomeFila = "minha-exchange-teste";
+        //cria a fila
+        await channel.QueueDeclareAsync(queue: nomeFila);
+
+        //pra verificar existe um metodo chamado 'ExchangeDeclarePassiveAsync' - nome da exchange
+        await channel.QueueDeclarePassiveAsync(nomeFila);
+    }
+    
+    [Fact]
+    public async Task DeveDarErroAoBuscarFilaNaoExistente()
+    {
+        //do que preciso?
+        var factory = new RabbitMqService();
+        
+        await using var connection = await factory.Connection.CreateConnectionAsync();
+        await using var channel = await connection.CreateChannelAsync();
+        
+        const string nomeFila = "minha-exchange-teste";
+        await channel.QueueDeclareAsync(queue: nomeFila);
+
+        //pra verificar existe um metodo chamado 'ExchangeDeclarePassiveAsync' - nome da exchange
+        await Assert.ThrowsAsync<OperationInterruptedException>(async () => await channel.QueueDeclarePassiveAsync("exchange-falsa"));
+    }
+    
+    [Fact]
+    public async Task DeveFazerBindingEntreFilaComExchange()
+    {
+        //do que preciso?
+        var factory = new RabbitMqService();
+        
+        await using var connection = await factory.Connection.CreateConnectionAsync();
+        await using var channel = await connection.CreateChannelAsync();
+        
+        const string nomeExchange = "minha-exchange-test";
+        await channel.ExchangeDeclareAsync(exchange: nomeExchange, type: ExchangeType.Fanout);
+        
+        const string nomeFila = "minha-exchange-teste";
+        await channel.QueueDeclareAsync(queue: nomeFila);
+
+        await channel.QueueBindAsync(nomeFila, nomeExchange, nomeFila);
+        
+        //como verificar se as duas estão vinculadas?
+        
+    }
+    
+    // estes de Queue (Muito Importante)
+    // Deve criar fila
+    // Deve fazer bind entre queue e exchange
+    // Deve falhar ao publicar sem binding
+    //
+    //Esses testes ajudam você a entender roteamento.
+    
+    //Criar exchange
+    // Criar queue
+    // Bind
+    // Publicar mensagem
+    // Consumir manualmente para validar
 }
