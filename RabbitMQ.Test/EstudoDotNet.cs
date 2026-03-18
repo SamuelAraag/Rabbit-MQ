@@ -2,11 +2,8 @@
 {
 	public class EstudoDotNet
 	{
-		public EstudoDotNet()
-		{
-		}
-
-		[Fact]
+        #region Dominio Rico e Dominio Anemico
+        [Fact]
 		public void DominioAnemico_SomentePropriedades()
 		{
 			//uma classe sem regras de negócio, somente estrutuda de dados
@@ -32,10 +29,7 @@
 		[InlineData(100)]
 		public void DominioRico_ClasseComRegrasDeNegocioValida(uint idade) //valido
 		{
-			var usuario = new UsuarioRico
-			{
-				Idade = idade,
-			};
+			var usuario = new UsuarioRico(idade);
 
 			var retornoValidacao = usuario.ValidarIdade();
 
@@ -52,10 +46,7 @@
         [InlineData(10)]
         public void DominioRico_ClasseComRegrasDeNegocioInvalida(uint idadeUsuario) //com erro
         {
-			var usuario = new UsuarioRico
-			{
-				Idade = idadeUsuario
-			};
+			var usuario = new UsuarioRico(idadeUsuario);
 
             var retornoCriacaoUsuario = Assert.Throws<Exception>(() => usuario.ValidarIdade());
 
@@ -65,16 +56,29 @@
         #region
         public class Usuario //classe anemica
         {
-			public string Nome { get; set; }
-			public string Sobrenome { get; set; }
+			public string Nome { get; set; } = string.Empty;
+			public string Sobrenome { get; set; } = string.Empty;
 			public DateTime DataNascimento { get; set; }
 			public uint Idade { get; set; }
 			public bool EhMaiorDeIdade { get; set; }
 		}
 
-		public class UsuarioRico : Usuario
+		public class UsuarioRico
 		{
-			public bool ValidarIdade()
+			public string Nome { get; set; } = string.Empty;
+			public string Sobrenome { get; set; } = string.Empty;
+            public DateTime DataNascimento { get; set; }
+            public uint Idade { get; private set; }
+            public bool EhMaiorDeIdade { get; private set; }
+
+			public UsuarioRico(uint idade)
+			{
+				DefinirIdade(idade);
+			}
+
+			private void DefinirIdade(uint idade) => Idade = idade;
+
+            public bool ValidarIdade()
 			{
 				if (Idade < 18)
 					throw new Exception($"Usuário deve ter pelo menos 18 anos. Esté usuario tem: [{Idade}]");
@@ -82,6 +86,15 @@
 				EhMaiorDeIdade = true;
 				return EhMaiorDeIdade;
 			}
+		}
+        #endregion
+        #endregion
+
+        #region EntityFramework
+        [Fact]
+		public void OqueE()
+		{
+			//
 		}
         #endregion
     }
